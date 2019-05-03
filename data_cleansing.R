@@ -10,11 +10,11 @@ calcule_missing_values <- function(df) {
 }
 
 
-missing<- calcule_missing_values(loan)
-head(missing)
+missing<- calcule_missing_values(new)
+
 library(ggplot2)
 rownames(missing)
-barplot(missing$percentage, names.arg=rownames(missing), horiz=F, las=3, cex.names=0.5, col = grey.colors(nrow(missing)), border=NA)
+barplot(new$percentage, names.arg=rownames(missing), horiz=F, las=3, cex.names=0.5, col = grey.colors(nrow(missing)), border=NA)
 
 drop_columns <- function (mis,df,threshold){
   m <- mis[mis$percentage < threshold, ]
@@ -28,5 +28,10 @@ drop_useless <- function (df,delete){
   return (newData)
 }
 
-head(calcule_missing_values(drop_useless(new,c("mths_since_last_delinq"))))
+head(calcule_missing_values(drop_useless(new,c("desc","mths_since_last_delinq"))))
+new <- drop_useless(new,c("desc","mths_since_last_delinq"))
+head(calcule_missing_values(new))
 
+na_count <- apply(new, 1, function(x) sum(is.na(x)))
+head(na_count)
+head(new)
