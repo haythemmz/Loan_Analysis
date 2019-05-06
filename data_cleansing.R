@@ -12,7 +12,7 @@ calcule_missing_values <- function(df) {
 
 missing<- calcule_missing_values(new)
 
-
+head(missi)
 
 drop_columns <- function (mis,df,threshold){
   m <- mis[mis$percentage < threshold, ]
@@ -27,6 +27,32 @@ drop_useless <- function (df,delete){
 }
 
 head(calcule_missing_values(drop_useless(new,c("desc","mths_since_last_delinq"))))
-new <- drop_useless(new,c("desc","mths_since_last_delinq"))
+new <- drop_useless(new,c("desc","mths_since_last_delinq","pub_rec_bankruptcies"))
 head(calcule_missing_values(new))
 
+drop_rows <- function (df,threshold){
+  a <- df[rowSums(is.na(df)) < threshold, ]
+  return (a)
+}
+
+a <- drop_rows(new,2)
+head(calcule_missing_values(a))
+
+# convert int_rate to num 
+b<- lapply(a$int_rate, function(x) as.numeric(sub("%", "", x))) 
+v <- unlist(b)
+a$int_rate <-v
+str(a)
+
+print(calcule_missing_values(a))
+library(ggplot2)  
+
+box_plot <- function (df, var1 , var2){
+  p=ggplot(df, aes(x =df$var1, y = df$var2,fill =df$var1))  + geom_boxplot() + theme_bw()
+  print(p)
+  }
+names(a)
+a$loan_bin=lapply(a$loan_status, function(x) as.numeric(sub("%", "", x)))
+box_plot(df=a,var1=loan_status,var2=loan_amnt)
+
+ggplot(a, aes(x =loan_status, y = loan_amnt , fill =loan_status))  + geom_boxplot() + theme_bw()
