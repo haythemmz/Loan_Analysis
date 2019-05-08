@@ -10,7 +10,7 @@ calcule_missing_values <- function(df) {
 }
 
 
-missing<- calcule_missing_values(new)
+missi<- calcule_missing_values(new)
 
 head(missi)
 
@@ -28,13 +28,14 @@ drop_useless <- function (df,delete){
 
 head(calcule_missing_values(drop_useless(new,c("desc","mths_since_last_delinq"))))
 new <- drop_useless(new,c("desc","mths_since_last_delinq","pub_rec_bankruptcies"))
+a <- drop_useless(a,c("loan_bin"))
+
 head(calcule_missing_values(new))
 
 drop_rows <- function (df,threshold){
   a <- df[rowSums(is.na(df)) < threshold, ]
   return (a)
 }
-
 a <- drop_rows(new,2)
 head(calcule_missing_values(a))
 
@@ -55,4 +56,7 @@ names(a)
 a$loan_bin=lapply(a$loan_status, function(x) as.numeric(sub("%", "", x)))
 box_plot(df=a,var1=loan_status,var2=loan_amnt)
 
-ggplot(a, aes(x =loan_status, y = loan_amnt , fill =loan_status))  + geom_boxplot() + theme_bw()
+ggplot(a, aes(x =loan_amnt , fill =loan_status))  + geom_boxplot() +facet_grid(loan_status ~ ., scales = 'free') +  theme_bw()
+head(a)
+write.csv(a,"C:\\Users\\hmzoughi\\Desktop\\Loan_Analysis\\Loan_Analysis\\clean_loan.csv")
+str(a)
